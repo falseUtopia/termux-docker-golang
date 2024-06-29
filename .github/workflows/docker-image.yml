@@ -1,0 +1,35 @@
+name: termux-docker-golang
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - '*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Set up QEMU
+        run: docker run --rm --privileged aptman/qus -s -- -p aarch64 arm
+
+      - name: Build Docker image
+        run: |
+          docker run --name termux-docker-golang --privileged termux/termux-docker:aarch64 bash -c 'pkg install -y golang git make'
+          docker commit --change='CMD ["/data/data/com.termux/files/usr/bin/login"]' termux-docker-golang termux-docker-golang:latest
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+
+      - name: Tag Docker image
+        run: |
+          docker tag termux-docker-golang:latest ${{ secrets.DOCKER_HUB_USERNAME }}/termux-docker-golang:latest
+          docker tag termux-docker-golang:latest ${{ secrets.DOCKER_HUB_USERNAME }}/termux-docker-golang:aarch64
+
+      - name: Push Docker image
+        run: |
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/termux-docker-golang:latest
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/termux-docker-golang:aarch64
