@@ -57,3 +57,16 @@ docker buildx build --allow network.host --allow security.insecure --platform li
 docker run --name termux-docker-golang --privileged termux/termux-docker:aarch64 bash -c 'pkg install -y golang git make'
 docker commit --change='CMD ["/data/data/com.termux/files/usr/bin/login"]' termux-docker-golang termux-docker-golang:latest
 ```
+
+
+## 使用:
+
+以 `trzsz-ssh` 为例子
+
+```
+# clone 和 构建
+docker run --name tmp_container --privileged fa1seut0pia/termux-docker-golang:aarch64 bash -c 'git clone https://github.com/trzsz/trzsz-ssh.git && cd trzsz-ssh && make'
+
+# 手动导出二进制文件
+docker cp tmp_container:/data/data/com.termux/files/home/trzsz-ssh/bin/tssh .
+```
