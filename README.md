@@ -63,7 +63,7 @@ docker commit --change='CMD ["/data/data/com.termux/files/usr/bin/login"]' termu
 
 以 `trzsz-ssh` 为例子
 
-```
+```shell
 # clone 和 构建
 docker run --name tmp_container --privileged fa1seut0pia/termux-docker-golang:aarch64 bash -c 'git clone https://github.com/trzsz/trzsz-ssh.git && cd trzsz-ssh && make'
 
